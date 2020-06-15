@@ -114,9 +114,29 @@ export default function Rushing() {
       icons={tableIcons}
       title="Football Rushing"
       columns={columns()}
+      options={{
+        exportButton: true,
+        exportCsv: (columns, data) => {
+          const query = window.state; 
+          
+          let params = new URLSearchParams();
+          params.set('offset', (query.page + 1));
+          params.set('limit', query.pageSize);
+          params.set('search', query.search);
+          
+          if(query.orderBy){
+            params.set('sort_field', query.orderBy.field);
+            params.set('sort_direction', query.orderDirection);
+          }
+          
+          let url = 'http://localhost:3001/rushings/download_csv.csv?'+ params.toString();
+          
+          window.location.href = url;
+        }
+      }}
       data={query =>
         new Promise((resolve, reject) => {
-          
+          window.state = query; 
           let params = new URLSearchParams();
           params.set('offset', (query.page + 1));
           params.set('limit', query.pageSize);
